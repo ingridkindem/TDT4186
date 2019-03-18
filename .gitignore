@@ -1,0 +1,9 @@
+
+production/*
+.idea/*
+.DS_Store
+*.xml
+.idea/workspace.xml
+.idea/SushiBar.iml
+.idea/modules.xml
+.idea/misc.xml

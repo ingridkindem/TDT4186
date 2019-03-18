@@ -18,7 +18,7 @@ public class Waitress implements Runnable {
 
     @Override
     public void run() {
-        while (!waitingArea. || SushiBar.isOpen){
+        while (!waitingArea.queue.isEmpty() || SushiBar.isOpen){
             Customer nextCustomer = waitingArea.next();
 
             // Waiting time befor ordering
@@ -39,17 +39,20 @@ public class Waitress implements Runnable {
 
             SushiBar.write(Thread.currentThread().getName() + " Customer " + nextCustomer.getCustomerID() + " is now leaving");
 
-            if((waitingArea.queue.next() == -1) && (!SushiBar.isOpen)){
-                SushiBar.write(Thread.currentThread().getName() + "***** NO MORE CUSTOMERS - THE SHOP IS CLOSED NOW. *****");
-                SushiBar.write(Thread.currentThread().getName() + "TotalOrders: " + SushiBar.totalOrders.get());
-                SushiBar.write(Thread.currentThread().getName() + "ServedOrders: " + SushiBar.servedOrders.get());
-                SushiBar.write(Thread.currentThread().getName() + "TakeAwayOrders: " + SushiBar.takeawayOrders.get());
-            }
+            SushiBar.customerCounter.decrement();
 
+
+
+        if((waitingArea.queue.isEmpty()) && (SushiBar.customerCounter.get()==0)) {
+
+            SushiBar.write(Thread.currentThread().getName() + "***** NO MORE CUSTOMERS - THE SHOP IS CLOSED NOW. *****");
+            SushiBar.write(Thread.currentThread().getName() + " Total Orders: " + SushiBar.totalOrders.get());
+            SushiBar.write(Thread.currentThread().getName() + " Served Orders: " + SushiBar.servedOrders.get());
+            SushiBar.write(Thread.currentThread().getName() + " TakeAway Orders: " + SushiBar.takeawayOrders.get());
         }
 
 
-
+    }
     }
 
 

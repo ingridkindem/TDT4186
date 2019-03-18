@@ -25,7 +25,7 @@ public class SushiBar {
     private static int waitingAreaCapacity = 15;
     private static int waitressCount = 8;
     private static int duration = 4;
-    private static int maxOrder = 10;
+    public static int maxOrder = 10;
     public static int waitressWait = 50; // Used to calculate the time the waitress spends before taking the order
     public static int customerWait = 2000; // Used to calculate the time the customer spends eating
     public static int doorWait = 100; // Used to calculate the interval at which the door tries to create a customer
@@ -69,7 +69,7 @@ public class SushiBar {
 
         // Start threads
         new Thread(door).start();
-        waitresses.forEach(waitress -> new Thread(Waitress).start());
+        waitresses.forEach(waitress -> new Thread(waitress).start());
     }
 
     //Writes actions in the log file and console

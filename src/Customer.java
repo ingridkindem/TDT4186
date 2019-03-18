@@ -18,9 +18,9 @@ public class Customer {
 
     }
 
-    public synchronized void order(){
-        totalOrders = (int)(Math.random() * (SushiBar.maxOrder +1 ));
-        takeaway = totalOrders * SushiBar.maxOrder;
+    public synchronized void order() {
+        totalOrders = (int) (Math.random() * (SushiBar.maxOrder + 1));
+        takeaway = (int) (Math.random() * totalOrders);
         eaten = totalOrders - takeaway;
 
         SushiBar.totalOrders.add(totalOrders);

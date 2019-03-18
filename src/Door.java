@@ -29,19 +29,15 @@ public class Door implements Runnable {
         }
 
         //Make costumers in random intervals
-        if (randomIntervall()) {
             try {
                 Thread.sleep(SushiBar.doorWait);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+
 
 
 
     }
 
-    public boolean randomIntervall(){
-        return Math.random() < 0.5;
-    }
 }

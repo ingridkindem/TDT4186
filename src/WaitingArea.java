@@ -14,7 +14,7 @@ import java.util.LinkedList;
  */
 public class WaitingArea {
 
-    private int capacity;
+    public int capacity;
     public LinkedList<Customer> queue;
 
 
@@ -26,7 +26,7 @@ public class WaitingArea {
     }
 
     public synchronized void enter(Customer customer) {
-        if (queue.size() != capacity ){
+        if (!isFull()){
             this.queue.add(customer);
             SushiBar.customerCounter.increment();
             SushiBar.write(Thread.currentThread().getName() + " Customer " + customer.getCustomerID() + " is now waiting.");
@@ -38,15 +38,27 @@ public class WaitingArea {
 
 
     public synchronized Customer next() {
-        if (queue.size() != -1){
-            Customer nextCustomer = queue.poll();
-            SushiBar.write(Thread.currentThread().getName() + " Customer " + nextCustomer.getCustomerID() + " is now waiting.");
-            notify();
-
-            return nextCustomer;
+        while(queue.isEmpty()){
+            try {
+                Thread.sleep(SushiBar.doorWait);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
         }
+        Customer nextCustomer = queue.pop();
+        SushiBar.write(Thread.currentThread().getName() + " Customer " + nextCustomer.getCustomerID() + " is now waiting.");
+        notify();
+
+        return nextCustomer;
 
     }
+
+    public boolean isFull(){
+
+        return queue.size() == capacity;
+    }
+
+
 
 }
