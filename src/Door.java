@@ -20,23 +20,27 @@ public class Door implements Runnable {
     @Override
     public void run() {
         int id = 1;
-        while (SushiBar.isOpen){
-            Customer c = new Customer(id);
 
-            this.waitingArea.enter(c);
-            id +=1;
+        while (SushiBar.isOpen) {
+            if (!waitingArea.isFull()) {
 
-        }
 
-        //Make costumers in random intervals
+                Customer c = new Customer(id);
+
+                this.waitingArea.enter(c);
+                id += 1;
+            }
+
+
+            //Make costumers in random intervals
             try {
                 Thread.sleep(SushiBar.doorWait);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
 
-
-
+        waitingArea.close();
 
     }
 

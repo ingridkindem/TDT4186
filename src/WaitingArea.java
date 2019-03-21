@@ -7,7 +7,7 @@ import java.util.LinkedList;
  * The waiting area should have:
  * - A way of keeping track of all the waiting customers
  * - A max capacity
- *
+ * <p>
  * Functionality:
  * - Let customers enter when there is room
  * - A way for customers to be fetched by waitresses
@@ -18,7 +18,6 @@ public class WaitingArea {
     public LinkedList<Customer> queue;
 
 
-
     public WaitingArea(int capacity) {
         this.capacity = capacity;
         queue = new LinkedList<>();
@@ -26,39 +25,53 @@ public class WaitingArea {
     }
 
     public synchronized void enter(Customer customer) {
-        if (!isFull()){
+        while (isFull()) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (!isFull()) {
             this.queue.add(customer);
             SushiBar.customerCounter.increment();
             SushiBar.write(Thread.currentThread().getName() + " Customer " + customer.getCustomerID() + " is now waiting.");
-            notify();
 
         }
+        notify();
 
     }
 
 
     public synchronized Customer next() {
-        while(queue.isEmpty()){
+        while (queue.isEmpty()) {
             try {
-                Thread.sleep(SushiBar.doorWait);
+                // For edge case
+                if (!SushiBar.isOpen) {
+                    return null;
+                }
+                wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
         }
         Customer nextCustomer = queue.pop();
-        SushiBar.write(Thread.currentThread().getName() + " Customer " + nextCustomer.getCustomerID() + " is now waiting.");
+        SushiBar.write(Thread.currentThread().getName() + " Customer " + nextCustomer.getCustomerID() + " is now fetched.");
         notify();
 
         return nextCustomer;
 
     }
 
-    public boolean isFull(){
+    public boolean isFull() {
 
         return queue.size() == capacity;
     }
 
-
+    public synchronized void close(){
+        notifyAll();
+    }
 
 }

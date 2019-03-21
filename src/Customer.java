@@ -15,7 +15,6 @@ public class Customer {
     public Customer(int id) {
         this.id = id;
 
-
     }
 
     public synchronized void order() {

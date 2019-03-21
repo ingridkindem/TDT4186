@@ -8,7 +8,7 @@
  * This means that the earlier the customer enters the waiting area, the sooner he/she is fetched.
  */
 public class Waitress implements Runnable {
-    private WaitingArea  waitingArea;
+    private WaitingArea waitingArea;
 
 
     Waitress(WaitingArea waitingArea) {
@@ -18,22 +18,29 @@ public class Waitress implements Runnable {
 
     @Override
     public void run() {
-        while (!waitingArea.queue.isEmpty() || SushiBar.isOpen){
+        while (!waitingArea.queue.isEmpty() || SushiBar.isOpen) {
             Customer nextCustomer = waitingArea.next();
 
-            // Waiting time befor ordering
-            try{
+            // For edge-case
+            if (nextCustomer == null) {
+                return;
+            }
+
+            // Waiting time before ordering
+            try {
                 Thread.sleep(SushiBar.waitressWait);
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
             nextCustomer.order();
 
             // Waiting for customer to eat up
-            try{
+            SushiBar.write(Thread.currentThread().getName() + " Customer " + nextCustomer.getCustomerID() + " is now eating");
+
+            try {
                 Thread.sleep(SushiBar.customerWait);
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
@@ -42,17 +49,18 @@ public class Waitress implements Runnable {
             SushiBar.customerCounter.decrement();
 
 
+            if ((waitingArea.queue.isEmpty()) && (SushiBar.customerCounter.get() == 0)) {
 
-        if((waitingArea.queue.isEmpty()) && (SushiBar.customerCounter.get()==0)) {
+                SushiBar.write(Thread.currentThread().getName() + " ***** NO MORE CUSTOMERS - THE SHOP IS CLOSED NOW. *****");
+                SushiBar.write(Thread.currentThread().getName() + " Total Orders: " + SushiBar.totalOrders.get());
+                SushiBar.write(Thread.currentThread().getName() + " Served Orders: " + SushiBar.servedOrders.get());
+                SushiBar.write(Thread.currentThread().getName() + " TakeAway Orders: " + SushiBar.takeawayOrders.get());
+                SushiBar.write(Thread.currentThread().getName() + " ***** DOOR CLOSED *****");
 
-            SushiBar.write(Thread.currentThread().getName() + "***** NO MORE CUSTOMERS - THE SHOP IS CLOSED NOW. *****");
-            SushiBar.write(Thread.currentThread().getName() + " Total Orders: " + SushiBar.totalOrders.get());
-            SushiBar.write(Thread.currentThread().getName() + " Served Orders: " + SushiBar.servedOrders.get());
-            SushiBar.write(Thread.currentThread().getName() + " TakeAway Orders: " + SushiBar.takeawayOrders.get());
+                SushiBar.isOpen = false;
+
+            }
         }
-
-
-    }
     }
 
 
